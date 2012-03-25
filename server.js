@@ -49,5 +49,5 @@ function onTcpRequest( socket ){
 
 http.createServer( onHttpRequest ).listen( config[ "port" ] );
 
-net.createServer( onTcpRequest ).listen( 8080 );
+net.createServer( onTcpRequest ).listen( 25678 );
 console.log( "server started" )
