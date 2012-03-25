@@ -8,7 +8,8 @@ var config = {
   , "staticUrl" : "http://cs.helsinki.fi/u/tkairi/kuvat/"
   , "lastTime" : new Date()
   , "cssUrl" : "http://twitter.github.com/bootstrap/assets/css/bootstrap.css"
-  , "port" : process.env.PORT || 8088
+  , "httpPort" : 8088
+  , "tcpPort" : 8080
 }
 
 
@@ -47,7 +48,7 @@ function onTcpRequest( socket ){
 
 }
 
-http.createServer( onHttpRequest ).listen( config[ "port" ] );
+http.createServer( onHttpRequest ).listen( config[ "httpPort" ] );
 
-net.createServer( onTcpRequest ).listen( 25678 );
+net.createServer( onTcpRequest ).listen( config[ "tcpPort" ] );
 console.log( "server started" )
