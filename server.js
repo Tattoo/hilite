@@ -9,7 +9,7 @@ var config = {
   , "lastTime" : new Date()
   , "cssUrl" : "http://twitter.github.com/bootstrap/assets/css/bootstrap.css"
   , "httpPort" : 8088
-  , "tcpPort" : 8080
+  , "tcpPort" : 8089
 }
 
 
