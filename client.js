@@ -2,6 +2,27 @@
   From http://svay.com/blog/hacking-rfid-with-nodejs/
 */
 
+function err( msg ){
+  console.log( msg );
+  process.exit( 1 );
+}
+
+if ( process.argv.length < 4 ) {
+  err( "Give port number and url as parameters" );
+}
+
+var port = parseInt( process.argv[2] );
+
+if ( port.toString() == "NaN" ) {
+  err( "Give proper port number as parameter: " + port );
+}
+
+var url = process.argv[3];
+
+if ( url == "" ){
+  err( "Give proper url" );
+}
+
 var HID = require( "HID" );
 var devices = new HID.devices( 7592, 4865 );
 var hid;
