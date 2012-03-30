@@ -56,7 +56,7 @@ function onRead( error, data ){
 }
 
 function sendMessage( message ){
-  var client = net.connect(8080, "127.0.0.1", function(){
+  var client = net.connect( port, url, function(){
     client.write( message );
     client.destroy();
   });
