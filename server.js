@@ -10,28 +10,38 @@ var config = {
   , "cssUrl" : "http://twitter.github.com/bootstrap/assets/css/bootstrap.css"
   , "httpPort" : 8088
   , "tcpPort" : 8089
+  , "cache" : {}
 }
 
 
-function merge(o1, o2){
-  o3 = {};
-  for (var attr in o1) { o3[attr] = o1[attr]; }
-  for (var attr in o2) { o3[attr] = o2[attr]; }
-  return o3;
+function getCachedContent( name, context ){
+  var cache = config[ "cache" ]; 
+ 
+  if ( cache.hasOwnProperty( name ) ){
+    return cache[ name ];
+  }
+
+  func = haml( fs.readFileSync( name, "utf-8" ) );
+  cache[ name ] = func( context );
+  return cache[ name ];
+}
+
+function clearCache( clearedItems ){ // function assumes clearedItems is Array
+  clearedItems.forEach(function( item ){
+    delete config[ "cache" ][ item ];
+  });
 }
 
 function onHttpRequest( req, res ){
-  
-  var content = haml( fs.readFileSync( ( config[ "status" ] ? "ok.tpl" : "nok.tpl" ), "utf8" ) );
+ 
+  var partial = ( config[ "status" ] ? "ok.tpl" : "nok.tpl" ); 
   var pageData = {
       "css": config[ "cssUrl" ]
-    , "content": content( config )
+    , "content": getCachedContent( partial, config )
   }
-  var layout = haml( fs.readFileSync( "index.tpl", "utf8" ) );
-  
 
   res.writeHead( 200, { "Content-Type": "text/html" } );
-  res.end( layout( pageData ) );
+  res.end( getCachedContent( "index.tpl", pageData ) );
 }
 
 function onTcpRequest( socket ){
@@ -40,9 +50,11 @@ function onTcpRequest( socket ){
     var data = data.toString();
     if ( data == "in" ){
       config[ "status" ] = true;
+      clearCache( ["index.tpl"] );
     } else if ( data == "out" ){
       config[ "status" ] = false;
       config[ "lastTime" ] = new Date();
+      clearCache( [ "nok.tpl", "index.tpl" ] );
     }
   });
 
