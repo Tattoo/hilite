@@ -48,6 +48,9 @@ function onTcpRequest( socket ){
 
   socket.on( "data", function( data ){
     var data = data.toString();
+
+    console.log( "Got data: <%s>", data );
+
     if ( data == "in" ){
       config[ "status" ] = true;
       clearCache( ["index.tpl"] );
