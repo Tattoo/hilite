@@ -48,8 +48,8 @@ function onTcpRequest( socket ){
 
   socket.on( "data", function( data ){
     var data = data.toString();
-
-    console.log( "Got data: <%s>", data );
+    var now = new Date().toTimeString().split(" ")[0];
+    console.log( "[%s] Got data: <%s>", now, data );
 
     if ( data == "in" ){
       config[ "status" ] = true;
