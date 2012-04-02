@@ -46,7 +46,6 @@ function getMessage( data ){
 
 function onRead( error, data ){
 
-  hid.write( [03, 01] ); //Disable sounds and lights
   if ( data[ 0 ] == 0 ) {
     hid.read( onRead );
     return;
