@@ -5,7 +5,8 @@ var haml = require( "./haml-js/lib/haml" );
 var io = require( "socket.io" );
 
 var config = {
-    "staticUrl" : "http://cs.helsinki.fi/u/tkairi/kuvat/"
+    "status" : false
+  ,  "staticUrl" : "http://cs.helsinki.fi/u/tkairi/kuvat/"
   , "lastTime" : new Date()
   , "cssUrl" : "http://twitter.github.com/bootstrap/assets/css/bootstrap.css"
   , "httpPort" : 8088
@@ -35,10 +36,13 @@ function clearCache( /* Array */ clearedItems ){
 
 function onHttpRequest( req, res ){
  
+  var content = getCachedContent( (config[ "status" ] ? "ok.tpl" : "nok.tpl"), config )
+ 
   var pageData = {
       "css": config[ "cssUrl" ]
     , "socket": config[ "socketIoConnect" ]
     , "lastTime": config[ "lastTime" ]
+    , "content": content
   }
 
   res.writeHead( 200, { "Content-Type": "text/html" } );
@@ -53,10 +57,13 @@ function onTcpRequest( socket ){
     console.log( "[%s] Got data: <%s>", now, data );
 
     if ( data == "in" ){
+      config[ "status" ] = true;
+      clearCache( [ "index.tpl" ] );
       clientSocket.sockets.emit( "update", { "content": getCachedContent( "ok.tpl", config ) } );
     } else if ( data == "out" ){
+      config[ "status" ] = false;
       config[ "lastTime" ] = new Date();
-      clearCache( [ "nok.tpl" ] );
+      clearCache( [ "nok.tpl", "index.tpl" ] );
       clientSocket.sockets.emit( "update", { "content": getCachedContent( "nok.tpl", config ) } );
     }
   });

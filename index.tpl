@@ -27,6 +27,4 @@
         Hello
         %br
         %div{ id: "content" }
-          Last break was at:
-          %br
-          = lastTime.toTimeString().split( " " )[0]
+          = content
