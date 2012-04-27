@@ -2,15 +2,16 @@ var http = require( "http" );
 var net = require( "net" );
 var fs = require( "fs" );
 var haml = require( "./haml-js/lib/haml" );
+var io = require( "socket.io" );
 
 var config = {
-    "status" : false
-  , "staticUrl" : "http://cs.helsinki.fi/u/tkairi/kuvat/"
+    "staticUrl" : "http://cs.helsinki.fi/u/tkairi/kuvat/"
   , "lastTime" : new Date()
   , "cssUrl" : "http://twitter.github.com/bootstrap/assets/css/bootstrap.css"
   , "httpPort" : 8088
   , "tcpPort" : 8089
   , "cache" : {}
+  , "socketIoConnect" : "http://localhost"
 }
 
 
@@ -26,7 +27,7 @@ function getCachedContent( name, context ){
   return cache[ name ];
 }
 
-function clearCache( clearedItems ){ // function assumes clearedItems is Array
+function clearCache( /* Array */ clearedItems ){ 
   clearedItems.forEach(function( item ){
     delete config[ "cache" ][ item ];
   });
@@ -34,10 +35,10 @@ function clearCache( clearedItems ){ // function assumes clearedItems is Array
 
 function onHttpRequest( req, res ){
  
-  var partial = ( config[ "status" ] ? "ok.tpl" : "nok.tpl" ); 
   var pageData = {
       "css": config[ "cssUrl" ]
-    , "content": getCachedContent( partial, config )
+    , "socket": config[ "socketIoConnect" ]
+    , "lastTime": config[ "lastTime" ]
   }
 
   res.writeHead( 200, { "Content-Type": "text/html" } );
@@ -52,18 +53,23 @@ function onTcpRequest( socket ){
     console.log( "[%s] Got data: <%s>", now, data );
 
     if ( data == "in" ){
-      config[ "status" ] = true;
-      clearCache( ["index.tpl"] );
+      clientSocket.sockets.emit( "update", { "content": getCachedContent( "ok.tpl", config ) } );
     } else if ( data == "out" ){
-      config[ "status" ] = false;
       config[ "lastTime" ] = new Date();
-      clearCache( [ "nok.tpl", "index.tpl" ] );
+      clearCache( [ "nok.tpl" ] );
+      clientSocket.sockets.emit( "update", { "content": getCachedContent( "nok.tpl", config ) } );
     }
   });
 
 }
 
-http.createServer( onHttpRequest ).listen( config[ "httpPort" ] );
+var server = http.createServer( onHttpRequest );
+server.listen( config[ "httpPort" ] );
+var clientSocket = io.listen( server );
+
+clientSocket.on( "connect", function(){
+  clientSocket.sockets.emit( "update", { content: getCachedContent( "nok.tpl", config ) } );
+});
 
 net.createServer( onTcpRequest ).listen( config[ "tcpPort" ] );
-console.log( "server started" )
+console.log( "Ready to go!" )
