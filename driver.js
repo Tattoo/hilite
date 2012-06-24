@@ -31,9 +31,13 @@ function onRead( error, data ){
   if ( d == 2 ) {
 
     if ( data[ 1 ]  == 1 ){
+
       console.log( "-> RFID in" );
+
     } else if ( data[ 1 ] == 2 ) {
+
       console.log( "<- RFID out" );
+
     }
 
   }

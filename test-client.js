@@ -15,13 +15,13 @@ if ( process.argv.length < 4 ) {
   err( "Give port number and url as parameters" );
 }
 
-var port = parseInt( process.argv[2] );
+var port = parseInt( process.argv[ 2 ] );
 
 if ( port.toString() == "NaN" ) {
   err( "Give proper port number as parameter: " + port );
 }
 
-var url = process.argv[3];
+var url = process.argv[ 3 ];
 
 if ( url == "" ){
   err( "Give proper url" );
@@ -32,10 +32,6 @@ function sendMessage( message ){
     client.write( message );
     client.destroy();
   });
-}
-
-function handleStdin( chunk ){
-  console.log();
 }
 
 var stdin = process.openStdin();

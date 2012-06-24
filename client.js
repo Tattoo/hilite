@@ -57,10 +57,12 @@ function onRead( error, data ){
 
 function sendMessage( message ){
   var client = net.connect( port, url, function(){
+
     client.write( message );
     var now = new Date().toTimeString().split(" ")[0];
     console.log( "[%s] Sent <%s> to %s:%s", now, message, url, port );
     client.destroy();
+
   });
 }
 

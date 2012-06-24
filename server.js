@@ -54,17 +54,22 @@ function onTcpRequest( socket ){
   socket.on( "data", function( data ){
     var data = data.toString();
     var now = new Date().toTimeString().split(" ")[0];
+
     console.log( "[%s] Got data: <%s>", now, data );
 
     if ( data == "in" ){
+
       config[ "status" ] = true;
       clearCache( [ "index.tpl" ] );
       clientSocket.sockets.emit( "update", { "content": getCachedContent( "ok.tpl", config ) } );
+
     } else if ( data == "out" ){
+
       config[ "status" ] = false;
       config[ "lastTime" ] = new Date();
       clearCache( [ "nok.tpl", "index.tpl" ] );
       clientSocket.sockets.emit( "update", { "content": getCachedContent( "nok.tpl", config ) } );
+
     }
   });
 
@@ -72,6 +77,7 @@ function onTcpRequest( socket ){
 
 var server = http.createServer( onHttpRequest );
 server.listen( config[ "httpPort" ] );
+
 var clientSocket = io.listen( server );
 
 clientSocket.on( "connect", function(){
