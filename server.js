@@ -8,7 +8,7 @@ var config = {
     "status" : false
   ,  "staticUrl" : "http://cs.helsinki.fi/u/tkairi/kuvat/"
   , "lastTime" : new Date()
-  , "cssUrl" : "http://twitter.github.com/bootstrap/assets/css/bootstrap.css"
+  , "cssUrl" : "http://current.bootstrapcdn.com/bootstrap-v204/css/bootstrap-combined.min.css"
   , "httpPort" : 8088
   , "tcpPort" : 8089
   , "cache" : {}
